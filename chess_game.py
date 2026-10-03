@@ -66,6 +66,8 @@ class Pionek:
 
     def zbicie(self, nowa_pozycja):
 
+
+
         if plansza[nowa_pozycja] is not None and plansza[nowa_pozycja].kolor != self.kolor:
             zbity_pionek = plansza[nowa_pozycja]
             zbity_pionek.zbity = True
@@ -85,6 +87,7 @@ class Pion(Pionek):
         else:
             return "P"
 
+
     def ruch(self, nowa_pozycja):
         stara_kolumna = self.pozycja[0]
         stary_wiersz = int(self.pozycja[1])
@@ -92,23 +95,52 @@ class Pion(Pionek):
         nowa_kolumna = nowa_pozycja[0]
         nowy_wiersz = int(nowa_pozycja[1])
 
+        '''if plansza[nowa_pozycja] is not None:
+            print("Niedozwolony ruch")
+            return False'''
+
         if self.kolor == 'bialy':
-            if stary_wiersz == 2 and nowy_wiersz == stary_wiersz + 2 and nowa_kolumna == stara_kolumna: # pionek, który sie nie ruszał może iść o dwa pola do przodu
-                return super().ruch(nowa_pozycja)
+            if self.czy_wolna_droga(nowa_pozycja) and stary_wiersz == 2 and nowy_wiersz == stary_wiersz + 2 and nowa_kolumna == stara_kolumna: # pionek, który sie nie ruszał może iść o dwa pola do przodu
+                return super().ruch(nowa_pozycja) # pod warunkiem, że nic nie stoi przed nim (skoczek)
+            elif nowy_wiersz == stary_wiersz - 1: # pionek nie moze iść do tyłu
+                print("niedozwolony ruch")
+                return False
+
+            elif nowy_wiersz == stary_wiersz + 1 and nowa_kolumna == stara_kolumna and plansza[nowa_pozycja] is not None: #pion nie moze zbijać/poruszać się na wprost, gdzie cos juz stoi
+                print("niedozwolony ruch")
+                return False
 
             elif nowa_kolumna == stara_kolumna and nowy_wiersz == stary_wiersz + 1: # warunek poruszania sie piona
                 return super().ruch(nowa_pozycja)
 
+            elif ((plansza[nowa_pozycja] is not None and ord(nowa_kolumna) == ord(stara_kolumna) + 1 and nowy_wiersz == stary_wiersz + 1)
+                  or (plansza[nowa_pozycja] is not None and ord(nowa_kolumna) == ord(stara_kolumna) - 1 and nowy_wiersz == stary_wiersz + 1)):
+                return super().ruch(nowa_pozycja) # zbijanie po skosie
+
             else:
-                print("niedozwolony ruch")
+                print("niedozwolony ruch") # inne przypadki
                 return False
         else:
             if stary_wiersz == 7 and nowy_wiersz == stary_wiersz - 2 and nowa_kolumna == stara_kolumna:  # pionek, który sie nie ruszał może iść o dwa pola do przodu
-                return super().ruch(nowa_pozycja)
+                return super().ruch(nowa_pozycja) # pod warunkiem, że nic nie stoi przed nim (skoczek)
+
+            elif nowy_wiersz == stary_wiersz + 1: # pionek nie moze iść do tyłu
+                print("niedozwolony ruch")
+                return False
+
+            elif nowy_wiersz == stary_wiersz - 1 and nowa_kolumna == stara_kolumna and plansza[nowa_pozycja] is not None:
+                print("niedozwolony ruch") #pion nie moze zbijać/poruszać się na wprost, gdzie cos juz stoi
+                return False
+
             elif nowa_kolumna == stara_kolumna and nowy_wiersz == stary_wiersz - 1: # warunek poruszania sie piona
                 return super().ruch(nowa_pozycja)
+
+            elif ((plansza[nowa_pozycja] is not None and ord(nowa_kolumna) == ord(stara_kolumna) + 1 and nowy_wiersz == stary_wiersz - 1)
+                    or (plansza[nowa_pozycja] is not None and ord(nowa_kolumna) == ord(stara_kolumna) - 1 and nowy_wiersz == stary_wiersz - 1)):
+                return super().ruch(nowa_pozycja) # zbijanie po skosie
+
             else:
-                print("niedozwolony ruch")
+                print("niedozwolony ruch") #inne przypadki
                 return False
 
 
@@ -378,6 +410,7 @@ while True:
 
 
         for i in range (8,0,-1):
+            print(i,"| ",end='')
             licznik = 0
             for j in range (1,9):
 
@@ -393,6 +426,8 @@ while True:
                 licznik += 1
 
             print("\n")
+        print("    ---------------")
+        print("    a b c d e f g h")
 
 
     wyswietl_plansze() # wyswietlenie planszy
@@ -400,51 +435,62 @@ while True:
     # musimy ustalić, kto gra? bialy czy czarny
     # parzysty - biale, nieparzyste - czarne
 
-
     if krok % 2 == 0:
+        kolor_gracza = 'bialy'
         print("Teraz gra BIAŁY |||||||||||||||||| JEŚLI CHCESZ ZAKOŃCZYĆ GRĘ, WPISZ 'END'")
-        pole_startowe = input("Podaj pole startowe pionka (tego, którego chcesz ruszyć): ")
-
-        if pole_startowe == 'END':
-            print("Koniec gry")
-            break
-
-        obiekt = plansza[pole_startowe]
-
-        while obiekt is None or obiekt.kolor != 'bialy':
-            print("Możesz grać jedynie białymi pionkami!")
-            pole_startowe = input("Podaj pole startowe pionka (tego, którego chcesz ruszyć): ")
-            obiekt = plansza[pole_startowe]
-
-
-        pole_docelowe = input("Podaj pole docelowe wybranego pionka: ")
-
-
-        wynik = obiekt.ruch(pole_docelowe) # nawet przypisanie zmiennej spowoduje wykonanie sie metody
-
-        if wynik:
-            krok += 1
-
     else:
+        kolor_gracza = 'czarny'
         print("Teraz gra CZARNY |||||||||||||||||| JEŚLI CHCESZ ZAKOŃCZYĆ GRĘ, WPISZ 'END'")
-        pole_startowe = input("Podaj pole startowe pionka (tego, którego chcesz ruszyć): ")
 
-        if pole_startowe == 'END':
-            print("Koniec gry")
-            break
-
-
-        obiekt = plansza[pole_startowe]
-
-        while obiekt is None or obiekt.kolor != 'czarny':
-            print("Możesz grać jedynie czarnymi pionkami!")
+    # WYBÓR POLA STARTOWEGO
+    while True:
+        try:
             pole_startowe = input("Podaj pole startowe pionka (tego, którego chcesz ruszyć): ")
+
+            if pole_startowe == 'END':
+                print("Koniec gry")
+                exit()
+
             obiekt = plansza[pole_startowe]
 
-        pole_docelowe = input("Podaj pole docelowe wybranego pionka: ")
+            if obiekt is None:
+                print("Na tym polu nie ma pionka!")
+                continue
 
+            if obiekt.kolor != kolor_gracza:
+                print(f"Możesz grać jedynie pionkami swojego koloru!")
+                continue
 
-        wynik = obiekt.ruch(pole_docelowe) # nawet przypisanie zmiennej spowoduje wykonanie sie metody
+            break
 
-        if wynik:
-            krok += 1
+        except KeyError:
+            print("Nie ma takiego pola")
+            continue
+
+    # WYBÓR POLA DOCELOWEGO
+    while True:
+        try:
+            pole_docelowe = input("Podaj pole docelowe wybranego pionka: ")
+
+            if pole_docelowe == 'END':
+                print("Koniec gry")
+                exit()
+
+            wynik = obiekt.ruch(pole_docelowe)
+
+            break
+
+        except KeyError:
+            print("Nie ma takiego pola")
+            continue
+
+        except ValueError:
+            print("Nie ma takiego pola")
+            continue
+
+        except IndexError:
+            print("Nie ma takiego pola")
+            continue
+
+    if wynik:
+        krok += 1
