@@ -66,8 +66,6 @@ class Pionek:
 
     def zbicie(self, nowa_pozycja):
 
-
-
         if plansza[nowa_pozycja] is not None and plansza[nowa_pozycja].kolor != self.kolor:
             zbity_pionek = plansza[nowa_pozycja]
             zbity_pionek.zbity = True
@@ -143,9 +141,69 @@ class Pion(Pionek):
                 print("niedozwolony ruch") #inne przypadki
                 return False
 
+    def promocja(self, nowa_pozycja):
+        nowy_wiersz = int(nowa_pozycja[1])
+
+        if (self.kolor == 'bialy' and nowy_wiersz == 8):
+            nowy_pionek = input("Wybierz nowego pionka: 'h' - hetman, 'w' - wieża, 'g' - goniec, 's' - skoczek")
+            while True:
+                if nowy_pionek == 'h':
+                    print("Wybrano hetmana")
+                    h: Hetman = Hetman(nowa_pozycja, False, self.kolor)
+                    plansza[nowa_pozycja] = h
+                    break
+                elif nowy_pionek == 'w':
+                    print("Wybrano wieżę")
+                    w: Wieza = Wieza(nowa_pozycja, False, self.kolor)
+                    plansza[nowa_pozycja] = w
+                    break
+                elif nowy_pionek == 'g':
+                    print("Wybrano gońca")
+                    g: Goniec = Goniec(nowa_pozycja, False, self.kolor)
+                    plansza[nowa_pozycja] = g
+                    break
+                elif nowy_pionek == 's':
+                    print("Wybrano skoczka")
+                    s: Skoczek = Skoczek(nowa_pozycja, False, self.kolor)
+                    plansza[nowa_pozycja] = s
+                    break
+                else:
+                    print("Nie ma takiego pionka")
+                    nowy_pionek = input("Wybierz nowego pionka: 'h' - hetman, 'w' - wieża, 'g' - goniec, 's' - skoczek")
+                    continue
+
+        elif self.kolor == 'czarny' and nowy_wiersz == 1:
+            nowy_pionek = input("Wybierz nowego pionka: 'H' - hetman, 'W' - wieża, 'G' - goniec, 'S' - skoczek")
+            while True:
+                if nowy_pionek == 'H':
+                    print("Wybrano hetmana")
+                    h: Hetman = Hetman(nowa_pozycja, False, self.kolor)
+                    plansza[nowa_pozycja] = h
+                    break
+                elif nowy_pionek == 'W':
+                    print("Wybrano wieżę")
+                    w: Wieza = Wieza(nowa_pozycja, False, self.kolor)
+                    plansza[nowa_pozycja] = w
+                    break
+                elif nowy_pionek == 'G':
+                    print("Wybrano gońca")
+                    g: Goniec = Goniec(nowa_pozycja, False, self.kolor)
+                    plansza[nowa_pozycja] = g
+                    break
+                elif nowy_pionek == 'S':
+                    print("Wybrano skoczka")
+                    s: Skoczek = Skoczek(nowa_pozycja, False, self.kolor)
+                    plansza[nowa_pozycja] = s
+                    break
+                else:
+                    print("Nie ma takiego pionka")
+                    nowy_pionek = input("Wybierz nowego pionka: 'H' - hetman, 'W' - wieża, 'G' - goniec, 'S' - skoczek")
+                    continue
+
+
 
 class Skoczek(Pionek):
-    def __init__(self, pozycja:str, zbity:bool, kolor:str):
+    def __init__(self, pozycja: str, zbity: bool, kolor: str):
         super().__init__(pozycja, zbity, kolor)
 
     def ruch(self,nowa_pozycja):
@@ -477,6 +535,9 @@ while True:
                 exit()
 
             wynik = obiekt.ruch(pole_docelowe)
+
+            if obiekt.__str__() == 'p' or obiekt.__str__() == 'P':
+                ewentualna_promocja = obiekt.promocja(pole_docelowe)
 
             break
 
