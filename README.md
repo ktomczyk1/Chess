@@ -9,7 +9,8 @@ Each pawn when selected will have their suggested moves shown on the plane.
 
 
 WHAT IS STILL NOT IMPLEMENTED?
-- Promotion
+- ~Promotion~(Done)
 - ~Beating other pawns~ (Done)
+- Check(mate)
 - UI design
 - AI (?)
